@@ -40,6 +40,7 @@
 #pragma once
 #include "types.hpp"
 #include <vector>
+#include <map>
 
 enum class ColumnType : u8 {
     UInt8,
@@ -49,13 +50,7 @@ enum class ColumnType : u8 {
     String
 };
 
-struct BCSVColumn {
-    u32 hash;
-    u32 offset;
-};
-
-struct BCSVSlot {
-    u32 column;
+struct BCSVField {
     ColumnType type;
 
     union {
@@ -64,13 +59,13 @@ struct BCSVSlot {
         u32 UInt32;
         float Float;
         const char* String;
-        void* raw;
     };
 
     void Print() const;
 };
 
-typedef std::vector<std::vector<BCSVSlot>> BCSVRows;
+typedef std::map<u32, BCSVField> BCSVRow;
+typedef std::vector<BCSVRow> BCSVData;
 
 class BCSV {
 protected:
@@ -117,7 +112,7 @@ protected:
     bool jpEnumFlag = false;
     u32 startPos = 0;
 
-    BCSVRows rows;
+    BCSVData csvData;
 
 public:
     BCSV(const char* filePath);
@@ -127,6 +122,9 @@ public:
     const char* GetErrorMessage() const;
     void Print() const;
 
-    bool GetAll(BCSVRows& outRows) const;
-    bool GetByColumnHash(std::vector<BCSVSlot>& outRows, u32 columnHash) const;
+    bool GetAll(BCSVData& outData) const;
+    bool GetColumnByHash(std::vector<BCSVField>& outCols, u32 columnHash) const;
+    u32 GetRowCount() const;
+    u32 GetColCount() const;
+    bool GetRow(BCSVRow& outRow, u32 index) const;
 };

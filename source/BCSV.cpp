@@ -24,6 +24,11 @@
 #include <cstdio>
 #include <cstring>
 
+struct BCSVColumn {
+    u32 hash;
+    u32 offset;
+};
+
 BCSV::BCSV(const char* filePath) {
     FILE* file = fopen(filePath, "r");
     if (file == NULL) {
@@ -117,7 +122,7 @@ void BCSV::Parse() {
     }
     
     for (u32 i = 0; i < this->numRows; i++, pos += this->rowSize) {
-        std::vector<BCSVSlot> rowValues;
+        BCSVRow rowValues;
 
         for (u16 j = 0; j < this->numColumns; j++) {
             u32 size = this->rowSize - cols[j].offset;
@@ -125,7 +130,7 @@ void BCSV::Parse() {
                 size = cols[j+1].offset - cols[j].offset;
             }
 
-            BCSVSlot row; row.type = ColumnType::String;
+            BCSVField row; row.type = ColumnType::String;
             if (size == sizeof(u8)) {
                 row.type = ColumnType::UInt8;
                 row.UInt8 = data[pos+cols[j].offset];
@@ -152,44 +157,50 @@ void BCSV::Parse() {
                 row.String = reinterpret_cast<const char*>(data + pos+cols[j].offset);
             }
 
-            row.column = cols[j].hash;
-            rowValues.push_back(row);
+            rowValues[cols[j].hash] = row;
         }
-        rows.push_back(std::move(rowValues));
+        this->csvData.push_back(std::move(rowValues));
     }
 }
 
-bool BCSV::GetAll(BCSVRows& outRows) const {
+bool BCSV::GetAll(BCSVData& outData) const {
     if (IsValid()) {
-        outRows = this->rows;
+        outData = this->csvData;
         return true;
     }
     return false;
 }
 
-bool BCSV::GetByColumnHash(std::vector<BCSVSlot>& outRows, u32 columnHash) const {
+bool BCSV::GetColumnByHash(std::vector<BCSVField>& outCols, u32 columnHash) const {
     if (!IsValid())
         return false;
 
-    outRows.clear();
-    size_t colIdx = 0xFFFFFFFF;
-    for (const auto& i : this->rows) {
-        if (colIdx != 0xFFFFFFFF) {
-            outRows.push_back(i[colIdx]);
-            continue;
-        }
-        for (size_t slot = 0; slot < i.size(); slot++) {  
-            if (i[slot].column == columnHash) {
-                outRows.push_back(i[slot]);
-                colIdx = slot;
-                break;
-            }
+    outCols.clear();
+    for (const auto& i : this->csvData) {
+        if (i.contains(columnHash)) {
+            outCols.push_back(i.at(columnHash));
         }
     }
     return true;
 }
 
-void BCSVSlot::Print() const {
+u32 BCSV::GetRowCount() const {
+    return IsValid() ? numRows : 0;
+}
+
+u32 BCSV::GetColCount() const {
+    return IsValid() ? numColumns : 0;
+}
+
+bool BCSV::GetRow(BCSVRow& outRow, u32 index) const {
+    if (!IsValid() || index > csvData.size())
+        return false;
+
+    outRow = csvData[index];
+    return true;
+}
+
+void BCSVField::Print() const {
     switch (type) {
         case ColumnType::UInt8:
             printf("%d ", UInt8);
@@ -217,14 +228,14 @@ void BCSVSlot::Print() const {
 }
 
 void BCSV::Print() const {
-    for (const auto& slot : rows[0]) {
-        printf("%08X ", slot.column);
+    for (const auto& slot : csvData[0]) {
+        printf("%08X ", slot.first);
     }
 
     printf("\n");
-    for (const auto& i : this->rows) {
+    for (const auto& i : this->csvData) {
         for (const auto& slot : i) {
-            slot.Print();
+            slot.second.Print();
         }
         printf("\n");
     }
