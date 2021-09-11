@@ -391,9 +391,9 @@ void Byaml::Print(const ByamlNode& node, std::string& outString, u32 indent) con
             {
                 if (node.size > 0) {
                     printTabs(indent, outString, NodeType::Binary);
-                    char byteStr[3] = {0};
+                    char byteStr[4] = {0};
                     for (u64 i = 0; i < node.size; i++) {
-                        snprintf(byteStr, 2, "%02X", node.bytes[i]);
+                        snprintf(byteStr, 3, "%02X", node.bytes[i]%0xFF);
                         outString += byteStr;
                     }
                     outString += '\n';
