@@ -26,7 +26,7 @@
 #ifdef __SWITCH__
 #include <switch.h>
 #else
-#include "aes.h"
+#include "libaes.h"
 #endif
 
 #define AES_BLOCK_LENGTH 0x10 //128 bits
