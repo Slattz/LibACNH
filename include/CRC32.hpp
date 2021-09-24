@@ -60,7 +60,7 @@ constexpr static const u32 crcTable[256] = { //Polynomial: 0x04C11DB7, 0xFFFFFFF
 };
 
 namespace CRC32 {
-    consteval u32 CalculateCEval(const char* str) {
+    consteval u32 Calc_CEval(const char* str) {
         u32 size = strlen(str);
         u32 crc = 0xFFFFFFFF;
         while (size-- != 0) {
@@ -71,7 +71,7 @@ namespace CRC32 {
         return ~crc;
     }
 
-    consteval u32 CalculateCEval(const u8* buf, u32 size) {
+    consteval u32 Calc_CEval(const u8* buf, u32 size) {
         u32 crc = 0xFFFFFFFF;
         while (size-- != 0) {
             crc = crcTable[(crc ^ *buf) & 0xFF] ^ (crc >> 8);
@@ -81,7 +81,7 @@ namespace CRC32 {
         return ~crc;
     }
 
-    constexpr u32 Calculate(const char* str) {
+    constexpr u32 Calc(const char* str) {
         u32 size = strlen(str);
         u32 crc = 0xFFFFFFFF;
         while (size-- != 0) {
@@ -92,7 +92,7 @@ namespace CRC32 {
         return ~crc;
     }
 
-    constexpr u32 Calculate(const u8* buf, u32 size) {
+    constexpr u32 Calc(const u8* buf, u32 size) {
         u32 crc = 0xFFFFFFFF;
         while (size-- != 0) {
             crc = crcTable[(crc ^ *buf) & 0xFF] ^ (crc >> 8);

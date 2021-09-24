@@ -22,36 +22,25 @@
 
 #include "MurmurHash3.hpp"
 
-#define READU32(addr) *(vu32 *)(addr)
-#define WRITEU32(addr, data) *(vu32 *)(addr) = data
+#define MURMUR_READU32(addr) *(u32 *)(addr)
+#define MURMUR_WRITEU32(addr, data) *(u32 *)(addr) = data
 
 //MurmurHash3 implementation, based on ACNH 1.4.2
-ALWAYS_INLINE uint32_t rotateRight(uint32_t x, int8_t r) { //EXTR (aka ROR) instruction in ARMv8
-    return (x >> r) | (x << (32 - r));
-}
-
-ALWAYS_INLINE u32 Murmur32_Scramble(u32 k) {
-    k = (k * 0x16A88000) | ((k * 0xCC9E2D51) >> 17);
-    k *= 0x1B873593;
-    return k;
-}
-
 u32 MurmurHash3::Calc(u8* data, u32 offset, u32 size, u32 seed) {
     u32 checksum = seed;
     const u32 nBlocks = (size / 4);
 
     if (size >= 4) { //Hash blocks, sizes of 4
         for (u32 i = 0; i < nBlocks; i++) {
-            u32 val = READU32(data+offset);
+            u32 val = MURMUR_READU32(data+offset+(i*4));
             checksum ^= Murmur32_Scramble(val);
             checksum = rotateRight(checksum, 19);
             checksum = (checksum * 5) + 0xE6546B64;
-            offset += 4;
         }
     }
     
     if (size % 4) {
-        const u8* remainder = data + (nBlocks*4);
+        const u8* remainder = data + offset + (nBlocks*4);
         u32 val = 0;
 
         switch(size & 3) { //Hash remaining bytes as size isn't always aligned by 4
@@ -74,10 +63,13 @@ u32 MurmurHash3::Calc(u8* data, u32 offset, u32 size, u32 seed) {
 
 u32 MurmurHash3::Update(u8* data, u32 hashOffset, u32 readOffset, u32 readSize) {
     u32 newHash = MurmurHash3::Calc(data, readOffset, readSize);
-    WRITEU32(data+hashOffset, newHash);
+    MURMUR_WRITEU32(data+hashOffset, newHash);
     return newHash;
 }
 
 u32 MurmurHash3::Verify(u8* data, u32 hashOffset, u32 readOffset, u32 readSize) {
-    return MurmurHash3::Calc(data, readOffset, readSize) == READU32(data + hashOffset);
+    return MurmurHash3::Calc(data, readOffset, readSize) == MURMUR_READU32(data + hashOffset);
 }
+
+#undef MURMUR_READU32
+#undef MURMUR_WRITEU32

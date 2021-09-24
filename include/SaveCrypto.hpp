@@ -43,7 +43,7 @@ struct GSaveVersion {
     u32 headerCrypto[HEADER_CRYPTO_SIZE];
 };
 
-static_assert((sizeof(GSaveVersion) == 0x300), "GSavePlayerVillagerAccount is not 0x48 in size!");
+static_assert((sizeof(GSaveVersion) == 0x300), "GSaveVersion is not 0x300 in size!");
 
 namespace SaveCrypto {
     void RegenHeaderCrypto(GSaveVersion& header, const u32 seed);
