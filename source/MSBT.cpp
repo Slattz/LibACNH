@@ -161,6 +161,7 @@ void MSBT::Parse() {
 }
 
 void MSBT::Print() {
+#ifdef DEBUG
     std::string textStr, labelStr;
     for (size_t i = 0; i < Texts.size(); i++) {
         const MSBTString& text = Texts[i];
@@ -188,4 +189,5 @@ void MSBT::Print() {
 
         printf("%s - %s\n", labelStr.c_str(), textStr.c_str());
     }
+#endif
 }

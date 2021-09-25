@@ -200,12 +200,10 @@ ByamlNode Byaml::ParseStringNode(u32 offset) {
     node.type = NodeType::String;
     node.string = stringTable[ReadU32(data+offset)];
     node.size = strlen(node.string);
-    //printf("Parsing String Node: %s\n", node.string);
     return node;
 }
 
 ByamlNode Byaml::ParseBinaryNode(u32 offset) {
-    //printf("Parsing Binary Node\n");
     ByamlNode node;
     node.type = NodeType::Binary;
     node.size = ReadU32(data+offset);
@@ -214,7 +212,6 @@ ByamlNode Byaml::ParseBinaryNode(u32 offset) {
 }
 
 ByamlNode Byaml::ParseArrayNode(u32 offset) {
-    //printf("Parsing Array Node\n");
     ByamlNode node;
     node.type = NodeType::Array;
     node.array = new std::vector<ByamlNode>();
@@ -228,7 +225,6 @@ ByamlNode Byaml::ParseArrayNode(u32 offset) {
 }
 
 ByamlNode Byaml::ParseHashNode(u32 offset) {
-    //printf("Parsing Hash Node\n");
     ByamlNode node;
     node.type = NodeType::Hash;
     node.hash = new std::map<const char*, ByamlNode>();
@@ -249,7 +245,6 @@ ByamlNode Byaml::ParseBoolNode(u32 offset) {
     ByamlNode node;
     node.type = NodeType::Bool;
     node.Bool = ReadU32(data+offset) != 0;
-    //printf("Parsing Bool Node: %d\n", node.Bool);
     return node;
 }
 
@@ -257,7 +252,6 @@ ByamlNode Byaml::ParseIntNode(u32 offset) {
     ByamlNode node;
     node.type = NodeType::Int;
     node.Int = ReadS32(data+offset);
-    //printf("Parsing Int Node: %d\n", node.Int);
     return node;
 }
 
@@ -265,7 +259,6 @@ ByamlNode Byaml::ParseFloatNode(u32 offset) {
     ByamlNode node;
     node.type = NodeType::Float;
     node.Float = ReadFloat(data+offset);
-    //printf("Parsing Float Node: %f\n", node.Float);
     return node;
 }
 
@@ -273,7 +266,6 @@ ByamlNode Byaml::ParseUIntNode(u32 offset) {
     ByamlNode node;
     node.type = NodeType::UInt;
     node.UInt = ReadU32(data+offset);
-    //printf("Parsing UInt Node: %d\n", node.UInt);
     return node;
 }
 
@@ -281,7 +273,6 @@ ByamlNode Byaml::ParseInt64Node(u32 offset) {
     ByamlNode node;
     node.type = NodeType::Int64;
     node.Int64 = ReadS64(data+offset);
-    //printf("Parsing Int64 Node: %ld\n", node.Int64);
     return node;
 }
 
@@ -289,7 +280,6 @@ ByamlNode Byaml::ParseUInt64Node(u32 offset) {
     ByamlNode node;
     node.type = NodeType::UInt64;
     node.UInt64 = ReadU64(data+offset);
-    //printf("Parsing UInt64 Node: %ld\n", node.UInt64);
     return node;
 }
 
@@ -297,12 +287,10 @@ ByamlNode Byaml::ParseDoubleNode(u32 offset) {
     ByamlNode node;
     node.type = NodeType::Double;
     node.Double = ReadDouble(data+offset);
-    //printf("Parsing Double Node: %f\n", node.Double);
     return node;
 }
 
 ByamlNode Byaml::ParseNullNode() {
-    //printf("Parsing Null Node\n");
     ByamlNode node;
     node.type = NodeType::Null;
     node.size = 0;
@@ -311,7 +299,9 @@ ByamlNode Byaml::ParseNullNode() {
 
 bool Byaml::ToString(std::string& outStr) const {
     if (IsValid()) {
+    #ifdef DEBUG
         Print(this->parentNode, outStr, 0);
+    #endif
         return true;
     }
 
@@ -322,6 +312,7 @@ bool Byaml::ToString(std::string& outStr) const {
 }
 
 void Byaml::printTabs(u32 indent, std::string& outString, NodeType type) const {
+#ifdef DEBUG
     outString += "├─";
     for (u32 i = 0; i < indent; i++)
         outString += "──";
@@ -378,9 +369,11 @@ void Byaml::printTabs(u32 indent, std::string& outString, NodeType type) const {
         default:
             break;
     }
+#endif
 }
 
 void Byaml::Print(const ByamlNode& node, std::string& outString, u32 indent) const {
+#ifdef DEBUG
     switch (node.type) {
         case NodeType::String:
             printTabs(indent, outString, NodeType::String);
@@ -461,9 +454,9 @@ void Byaml::Print(const ByamlNode& node, std::string& outString, u32 indent) con
             break;
 
         default:
-            //printf("UNKNOWN: 0x%02X\n", (u8)node.type);
             break;
     }
+#endif
 }
 
 void ByamlNode::Find(std::vector<ByamlNode>& outNodes, const char* keyName, bool found) {

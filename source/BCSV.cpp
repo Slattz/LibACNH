@@ -201,6 +201,7 @@ bool BCSV::GetRow(BCSVRow& outRow, u32 index) const {
 }
 
 void BCSVField::Print() const {
+#ifdef DEBUG
     switch (type) {
         case ColumnType::UInt8:
             printf("%d ", UInt8);
@@ -225,9 +226,11 @@ void BCSVField::Print() const {
         default:
             break;
     }
+#endif
 }
 
 void BCSV::Print() const {
+#ifdef DEBUG
     for (const auto& slot : csvData[0]) {
         printf("%08X ", slot.first);
     }
@@ -239,5 +242,6 @@ void BCSV::Print() const {
         }
         printf("\n");
     }
+#endif
 }
 

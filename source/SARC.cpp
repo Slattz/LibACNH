@@ -184,9 +184,11 @@ void SARC::Parse() {
 }
 
 void SARC::Print() {
+#ifdef DEBUG
     for (auto& i : fileInfo) {
         printf("%s\n", i.name);
     }
+#endif
 }
 
 bool SARC::GetFile(const char *outFile, const char *sarcFilePath) {
