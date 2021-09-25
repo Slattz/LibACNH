@@ -177,7 +177,7 @@ bool BCSV::GetColumnByHash(std::vector<BCSVField>& outCols, u32 columnHash) cons
 
     outCols.clear();
     for (const auto& i : this->csvData) {
-        if (i.contains(columnHash)) {
+        if (i.find(columnHash) != i.end()) { //equivalent to C++20's 'contains'
             outCols.push_back(i.at(columnHash));
         }
     }

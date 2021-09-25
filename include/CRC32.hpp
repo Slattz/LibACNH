@@ -60,7 +60,7 @@ constexpr static const u32 crcTable[256] = { //Polynomial: 0x04C11DB7, 0xFFFFFFF
 };
 
 namespace CRC32 {
-    consteval u32 Calc_CEval(const char* str) {
+    LIBACNH_CONSTEXPR u32 Calc(const char* str) {
         u32 size = strlen(str);
         u32 crc = 0xFFFFFFFF;
         while (size-- != 0) {
@@ -71,7 +71,7 @@ namespace CRC32 {
         return ~crc;
     }
 
-    consteval u32 Calc_CEval(const u8* buf, u32 size) {
+    LIBACNH_CONSTEXPR u32 Calc(const u8* buf, u32 size) {
         u32 crc = 0xFFFFFFFF;
         while (size-- != 0) {
             crc = crcTable[(crc ^ *buf) & 0xFF] ^ (crc >> 8);
@@ -81,7 +81,8 @@ namespace CRC32 {
         return ~crc;
     }
 
-    constexpr u32 Calc(const char* str) {
+#if __cplusplus > 201703L
+    LIBACNH_CONSTEVAL u32 Calc_CEval(const char* str) {
         u32 size = strlen(str);
         u32 crc = 0xFFFFFFFF;
         while (size-- != 0) {
@@ -92,7 +93,7 @@ namespace CRC32 {
         return ~crc;
     }
 
-    constexpr u32 Calc(const u8* buf, u32 size) {
+    LIBACNH_CONSTEVAL u32 Calc_CEval(const u8* buf, u32 size) {
         u32 crc = 0xFFFFFFFF;
         while (size-- != 0) {
             crc = crcTable[(crc ^ *buf) & 0xFF] ^ (crc >> 8);
@@ -101,4 +102,15 @@ namespace CRC32 {
 
         return ~crc;
     }
+
+#else
+    ALWAYS_INLINE u32 Calc_CEval(const char* str) {
+        return CRC32::Calc(str);
+    }
+
+    ALWAYS_INLINE u32 Calc_CEval(const u8* buf, u32 size) {
+        return CRC32::Calc(buf, size);
+    }
+
+#endif
 }

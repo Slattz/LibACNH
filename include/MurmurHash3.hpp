@@ -28,18 +28,23 @@ namespace MurmurHash3 {
     namespace {
         #define STRTOU32(str, offset) (str[offset] | str[offset+1] << 8 | str[offset+2] << 16 | str[offset+3] << 24)
 
-        constexpr ALWAYS_INLINE u32 rotateRight(u32 x, s8 r) { //EXTR (aka ROR) instruction in ARMv8
+        LIBACNH_CONSTEXPR u32 rotateRight(u32 x, s8 r) { //EXTR (aka ROR) instruction in ARMv8
             return (x >> r) | (x << (32 - r));
         }
 
-        constexpr ALWAYS_INLINE u32 Murmur32_Scramble(u32 k) {
+        LIBACNH_CONSTEXPR u32 Murmur32_Scramble(u32 k) {
             k = (k * 0x16A88000) | ((k * 0xCC9E2D51) >> 17);
             k *= 0x1B873593;
             return k;
         }
     }
 
-    consteval u32 Calc_CEval(const char* str, u32 offset = 0, u32 seed = 0) {
+    u32 Calc(u8* data, u32 offset, u32 size, u32 seed = 0); //ACNH 1.4.2 code: 0x7100036380
+    u32 Update(u8* data, u32 hashOffset, u32 readOffset, u32 readSize);
+    u32 Verify(u8* data, u32 hashOffset, u32 readOffset, u32 readSize);
+
+#if __cplusplus > 201703L
+    LIBACNH_CONSTEVAL u32 Calc_CEval(const char* str, u32 offset = 0, u32 seed = 0) {
         u32 size = strlen(str) - offset;
         u32 checksum = seed;
         const u32 nBlocks = (size / 4);
@@ -74,8 +79,11 @@ namespace MurmurHash3 {
         checksum ^= checksum >> 16;
         return checksum;
     }
+#else
+    ALWAYS_INLINE u32 Calc_CEval(const char* str, u32 offset = 0, u32 seed = 0) {
+        return MurmurHash3::Calc((u8*)str+offset, 0, strlen(str) - offset, seed);
+    }
 
-    u32 Calc(u8* data, u32 offset, u32 size, u32 seed = 0); //ACNH 1.4.2 code: 0x7100036380
-    u32 Update(u8* data, u32 hashOffset, u32 readOffset, u32 readSize);
-    u32 Verify(u8* data, u32 hashOffset, u32 readOffset, u32 readSize);
+
+#endif
 }
