@@ -24,6 +24,7 @@
 #include "types.hpp"
 #include <string>
 #include <vector>
+#include <map>
 
 enum MSBTEncoding : u8 {
     Encoding_UTF8 = 0,
@@ -68,8 +69,8 @@ protected:
     }
 
     void Init();
-    void ParseTXT2(u32 dataPos, u32 sectionSize);
-    void ParseLBL1(u32 dataPos);
+    void ParseTXT2(std::vector<MSBTString>& Texts, u32 dataPos, u32 sectionSize);
+    void ParseLBL1(std::vector<MSBTString>& Labels, u32 dataPos);
     void Parse();
 
     u8* data = nullptr;
@@ -83,8 +84,7 @@ protected:
     MSBTEncoding encoding = Encoding_None;
     u16 sectionCount = 0;
 
-    std::vector<MSBTString> Labels;
-    std::vector<MSBTString> Texts;
+    std::map<std::string, std::string> stringMap;
 
 public:
     MSBT(const char *filePath);
@@ -92,6 +92,9 @@ public:
     virtual ~MSBT();
     bool IsValid() const;
     const char *GetErrorMessage() const;
+
+    bool GetAll(std::map<std::string, std::string>& stringMap);
+    bool Get(const char* label, std::string& text);
 
     void Print();
 };

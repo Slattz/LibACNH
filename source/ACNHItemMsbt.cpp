@@ -42,15 +42,11 @@ ACNHItemMsbt::~ACNHItemMsbt() {
 
 //Hacky, assumes MSBT param sizes
 void ACNHItemMsbt::FixItemNames() {
-    for (size_t i = 0; i < Texts.size(); i++) {
-        MSBTString& text = Texts[i];
-
-        if (text.encoding == Encoding_UTF16) {
-            u32 offset = 0;
-            if (text.stringBytes[0] == 0xE) offset = 0xC; //All Items
-            if (text.stringBytes[0xC] == 0xE) offset += 0x8; //Special "π pie" handling
-            text.stringBytes += offset;
-            text.stringSize -= offset;
-        }
+    for (auto& i : stringMap) {
+        u32 offset = 0;
+        const char* str = i.second.c_str();
+        if (str[0] == 0xE) offset = 0x9; //All Items
+        if (str[0x9] == 0xE) offset += 0x4; //Special "π pie" handling
+        stringMap[i.first] = std::string(str+offset, i.second.size()-offset);
     }
 }

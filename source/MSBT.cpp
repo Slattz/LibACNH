@@ -22,6 +22,7 @@
 
 #include "MSBT.hpp"
 #include <cstdio>
+#include <string>
 #include <cstring>
 #include <algorithm>
 #include <locale>
@@ -103,7 +104,7 @@ const char* MSBT::GetErrorMessage() const {
     return errorMessage;
 }
 
-void MSBT::ParseTXT2(u32 dataPos, u32 sectionSize) {
+void MSBT::ParseTXT2(std::vector<MSBTString>& Texts, u32 dataPos, u32 sectionSize) {
     u32 entryCount = ReadU32(data+dataPos);
     u32 offsetPos = dataPos+4;
 
@@ -120,7 +121,7 @@ bool compareIndex(MSBTString& s1, MSBTString& s2) {
     return (s1.index < s2.index);
 }
 
-void MSBT::ParseLBL1(u32 dataPos) {
+void MSBT::ParseLBL1(std::vector<MSBTString>& Labels, u32 dataPos) {
     u32 entryCount = ReadU32(data+dataPos);
     u32 offsetPos = dataPos+4;
     
@@ -143,39 +144,30 @@ void MSBT::ParseLBL1(u32 dataPos) {
 
 #define SECTION_HEADER_SIZE 0x10
 void MSBT::Parse() {
+    std::vector<MSBTString> Labels;
+    std::vector<MSBTString> Texts;
     u32 pos = 0x20;
 
     for (u16 i = 0; i < sectionCount; i++) {
         u32 sectionSize = ReadU32(data+pos+4);
         if (strncmp((const char*)data+pos, "TXT2", 4) == 0) {
-            ParseTXT2(pos+SECTION_HEADER_SIZE, sectionSize);
+            ParseTXT2(Texts, pos+SECTION_HEADER_SIZE, sectionSize);
         }
 
         else if (strncmp((const char*)data+pos, "LBL1", 4) == 0) {
-            ParseLBL1(pos+SECTION_HEADER_SIZE);
+            ParseLBL1(Labels, pos+SECTION_HEADER_SIZE);
         }
 
         pos += sectionSize + SECTION_HEADER_SIZE; //also skips over other sections
         pos = AlignUp(pos, 16);
     }
-}
 
-void MSBT::Print() {
-#ifdef DEBUG
-    std::string textStr, labelStr;
+    std::string labelStr, textStr;
     for (size_t i = 0; i < Texts.size(); i++) {
         const MSBTString& text = Texts[i];
         const MSBTString& label = Labels[i];
 
-        if (label.encoding == Encoding_UTF8) {
-            labelStr = std::string((const char*)label.stringBytes, label.stringSize);
-        }
-
-        else {
-            std::u16string str((const char16_t*)(label.stringBytes), label.stringSize);
-            std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
-            labelStr = convert.to_bytes(str);
-        }
+        labelStr = std::string((const char*)label.stringBytes, label.stringSize);
 
         if (text.encoding == Encoding_UTF8) {
             textStr = std::string((const char *)text.stringBytes, text.stringSize);
@@ -187,7 +179,33 @@ void MSBT::Print() {
             textStr = convert.to_bytes(str);
         }
 
-        printf("%s - %s\n", labelStr.c_str(), textStr.c_str());
+        stringMap[labelStr] = textStr;
+    }
+}
+
+bool MSBT::GetAll(std::map<std::string, std::string>& stringMap) {
+    if (!IsValid())
+        return false;
+
+    stringMap = this->stringMap;
+    return true;
+}
+
+bool MSBT::Get(const char* label, std::string& text) {
+    if (!IsValid())
+        return false;
+
+    if (stringMap.find(label) != stringMap.end()) { //equivalent to C++20's 'contains'
+        text = stringMap.at(label);
+        return true;
+    }
+    return false;
+}
+
+void MSBT::Print() {
+#ifdef DEBUG
+    for (auto& i : stringMap) {
+        printf("%s - %s\n", i.first.c_str(), i.second.c_str());
     }
 #endif
 }
