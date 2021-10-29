@@ -46,6 +46,7 @@ struct GSaveVersion {
 static_assert((sizeof(GSaveVersion) == 0x300), "GSaveVersion is not 0x300 in size!");
 
 namespace SaveCrypto {
+    void RegenHeaderCrypto(GSaveVersion& header);
     void RegenHeaderCrypto(GSaveVersion& header, const u32 seed);
     void Crypt(const GSaveVersion& header, u8* encryptedSave, const u32 saveSize);
 }

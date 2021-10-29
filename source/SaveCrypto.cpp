@@ -31,6 +31,11 @@
 
 #define AES_BLOCK_LENGTH 0x10 //128 bits
 
+void SaveCrypto::RegenHeaderCrypto(GSaveVersion& header) {
+    sead::Random rand = sead::Random();
+    for (u32 i = 0; i < HEADER_CRYPTO_SIZE; i++)
+        header.headerCrypto[i] = rand.GetU32();
+}
 void SaveCrypto::RegenHeaderCrypto(GSaveVersion& header, const u32 seed) {
     sead::Random rand = sead::Random(seed);
     for (u32 i = 0; i < HEADER_CRYPTO_SIZE; i++)

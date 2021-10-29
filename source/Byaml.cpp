@@ -369,6 +369,10 @@ void Byaml::printTabs(u32 indent, std::string& outString, NodeType type) const {
         default:
             break;
     }
+#else
+    (void)indent;
+    (void)outString;
+    (void)type;
 #endif
 }
 
@@ -456,6 +460,10 @@ void Byaml::Print(const ByamlNode& node, std::string& outString, u32 indent) con
         default:
             break;
     }
+#else
+    (void)node;
+    (void)outString;
+    (void)indent;
 #endif
 }
 

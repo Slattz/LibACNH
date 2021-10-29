@@ -110,7 +110,7 @@ The SaveCrypto namespace implements the savefile cryptography that is used by AC
 
 ACNH uses 128bit [AES-CTR](https://wikipedia.org/wiki/Block_cipher_mode_of_operation#Counter_(CTR)) x-crypting, with a Key and Counter both generated from the respected save's Header file.
 
-The **`SaveCrypt::Crypt`** function provides in-place encryption and decryption.
+The **`SaveCrypto::Crypt`** function provides in-place encryption and decryption.
 
 ## sead::Random
 
