@@ -28,16 +28,16 @@ struct GSaveVersion {
     u32 Major;
     u32 Minor;
     u32 SaveHeaderVersion; //Read as a u32 in the ACNH 1.4.2 (0x7101241ACC) and 1.0.0 (0x7100FD8274)
-    u16 Unk2;
-    u16 GameRevision; //Code checks if this is not 999 when code's is not 999; otherwise if code's is 999, then code checks if the value is 999; ctor defaults to 0xFFFF
-    u8 Padding[0x30];
+    u16 SaveCryptoVersion;
+    u16 RomReleaseVersion; //Code checks if this is not 999 when code's is not 999; otherwise if code's is 999, then code checks if the value is 999; ctor defaults to 0xFFFF
+    u8 _ReserveField[0x30];
 
     //Header Info of when save was created
     u32 Created_Major;
     u32 Created_Minor;
     u32 Created_SaveHeaderVersion;
-    u16 Created_Unk2;
-    u16 Created_GameRevision;
+    u16 Created_SaveCryptoVersion;
+    u16 Created_RomReleaseVersion;
     u8 Padding2[0xB0];
 
     u32 headerCrypto[HEADER_CRYPTO_SIZE];
