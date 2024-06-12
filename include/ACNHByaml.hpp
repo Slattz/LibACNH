@@ -26,6 +26,9 @@
 class ACNHByaml : public Byaml {
 private:
     u64 CalcOffset(u32& typeName, u32 fieldName);
+    u64 GetSize(u32& typeName, u32 fieldName);
+    u64 GetSize(u32& typeName, u32 fieldName, ByamlNode &node);
+    ByamlNode GetNode(u32& typeName, u32 fieldName);
 
 public:
     ACNHByaml(const char* filePath);
@@ -33,4 +36,7 @@ public:
     ~ACNHByaml() override;
 
     u64 CalcOffsets(u32 fieldType, const std::vector<u32>& fieldNames);
+    u64 GetSize(u32 fieldType, const std::vector<u32>& fieldNames);
+    ByamlNode GetNode(u32 fieldType, const std::vector<u32>& fieldNames);
+    
 };
