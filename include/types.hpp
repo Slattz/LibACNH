@@ -40,12 +40,6 @@
     #define LIBACNH_CONSTEXPR ALWAYS_INLINE
 #endif
 
-#ifdef __SWITCH__
-#include <switch/types.h>
-
-#else
-#include <stdint.h>
-
 /// Packs a struct so that it won't include padding bytes.
 #ifndef PACKED
 #define PACKED     __attribute__((packed))
@@ -55,6 +49,12 @@
 #ifndef NORETURN
 #define NORETURN   __attribute__((noreturn))
 #endif
+
+#ifdef __SWITCH__
+#include <switch/types.h>
+
+#else
+#include <stdint.h>
 
 typedef uint8_t u8;       ///<   8-bit unsigned integer.
 typedef uint16_t u16;     ///<  16-bit unsigned integer.
