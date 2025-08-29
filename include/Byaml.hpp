@@ -1,21 +1,21 @@
 /**
- * 
+ *
  * Byaml.hpp
- * 
+ *
  * Copyright (c) 2021-2021, Slattz.
- * 
+ *
  * This file is part of LibACNH (https://github.com/Slattz/LibACNH).
- * 
+ *
  * LibACNH is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * LibACNH is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with LibACNH.  If not, see <https://www.gnu.org/licenses/>
  */
@@ -46,7 +46,7 @@ enum class NodeType : u8 {
 struct ByamlNode {
     NodeType type;
     u64 size;
-    
+
     union {
         void* raw;
         const char* string;
@@ -69,7 +69,7 @@ struct ByamlNode {
 class Byaml {
 protected:
     inline void InValidate(const char* message) {
-        this->isValid = false; 
+        this->isValid = false;
         this->errorMessage = message;
     }
 
@@ -182,7 +182,7 @@ protected:
 
     bool bigEndian;
     bool isValid = true;
-    
+
     ByamlNode parentNode;
 
     std::vector<const char*> stringTable;

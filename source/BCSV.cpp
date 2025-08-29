@@ -1,21 +1,21 @@
 /**
- * 
+ *
  * BCSV.cpp
- * 
+ *
  * Copyright (c) 2021-2021, Slattz.
- * 
+ *
  * This file is part of LibACNH (https://github.com/Slattz/LibACNH).
- * 
+ *
  * LibACNH is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * LibACNH is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with LibACNH.  If not, see <https://www.gnu.org/licenses/>
  */
@@ -44,7 +44,7 @@ BCSV::BCSV(const char* filePath) {
     if (res == dataSize) {
         autoManageMem = true;
         this->Init();
-    } 
+    }
     else {
         InValidate("Failed to fully read file");
         delete[] data;
@@ -86,8 +86,8 @@ void BCSV::Init() {
 
     else if (version == 1) {
         startPos = 0x1C;
-        if (data[0xC] != 'V' || data[0xD] != 'S' || data[0xE] != 'C' || data[0xF] != 'B') { //Magic 
-            InValidate("Invalid BCSV Magic"); 
+        if (data[0xC] != 'V' || data[0xD] != 'S' || data[0xE] != 'C' || data[0xF] != 'B') { //Magic
+            InValidate("Invalid BCSV Magic");
             return;
         }
     }
@@ -120,7 +120,7 @@ void BCSV::Parse() {
         cols[i].hash = ReadU32(data + pos);
         cols[i].offset = ReadU32(data + pos + 4);
     }
-    
+
     for (u32 i = 0; i < this->numRows; i++, pos += this->rowSize) {
         BCSVRow rowValues;
 
@@ -222,7 +222,7 @@ void BCSVField::Print() const {
         case ColumnType::String:
             printf("%s ", String);
             break;
-            
+
         default:
             break;
     }
