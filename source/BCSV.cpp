@@ -113,7 +113,7 @@ void BCSV::Parse() {
         return;
     }
 
-    BCSVColumn cols[numColumns];
+    std::vector<BCSVColumn> cols(numColumns);
 
     u32 pos = this->startPos;
     for (u16 i = 0; i < numColumns; i++, pos+=8) {

@@ -29,6 +29,12 @@
 #else
 #include <stdint.h>
 
+#ifdef _MSC_VER
+#include <__MSVC_Int128.hpp>
+using __int128_t = std::_Signed128;
+using __uint128_t = std::_Unsigned128;
+#endif
+
 typedef uint8_t u8;       ///<   8-bit unsigned integer.
 typedef uint16_t u16;     ///<  16-bit unsigned integer.
 typedef uint32_t u32;     ///<  32-bit unsigned integer.

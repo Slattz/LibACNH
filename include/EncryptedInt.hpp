@@ -25,12 +25,12 @@
 
 union EncVal {
     u64 val = 0;
-    struct PACKED {
+    PACKED_ANON_STRUCT (
         u32 amount;
         u16 adjust;
         u8 shiftval;
         u8 checksum;
-    };
+    );
 };
 
 class EncryptedInt {

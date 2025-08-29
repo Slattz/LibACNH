@@ -22,8 +22,20 @@
 
 #pragma once
 
-/// Flags a function as (always) inline.
-#define ALWAYS_INLINE __attribute__((always_inline)) inline
+/// Define ALWAYS_INLINE to flag a function as (always) inline.
+/// Define PACKED_ANON_STRUCT(...) to create an anonymous struct with no padding bytes.
+/// Define NORETURN to mark a function as not returning, for the purposes of compiler optimization.
+#if defined(_MSC_VER)
+    #define ALWAYS_INLINE __forceinline
+    #define PACKED_ANON_STRUCT(...) __pragma(pack(push, 1)) struct { __VA_ARGS__ } __pragma(pack(pop))
+    #define NORETURN __declspec(noreturn)
+#elif defined(__GNUC__) || defined(__clang__)
+    #define ALWAYS_INLINE __attribute__((always_inline)) inline
+    #define PACKED_ANON_STRUCT(...) struct __attribute__((packed)) { __VA_ARGS__ }
+    #define NORETURN __attribute__((noreturn))
+#else
+    #error "Can't define ALWAYS_INLINE, PACKED_ANON_STRUCT or NORETURN for this compiler"
+#endif
 
 /// Flags a function as consteval in >= C++20, else constexpr in >= C++14, else just always inline
 /// Flags a function as constexpr in >= C++14, else just always inline
@@ -40,12 +52,11 @@
     #define LIBACNH_CONSTEXPR ALWAYS_INLINE
 #endif
 
-/// Packs a struct so that it won't include padding bytes.
-#ifndef PACKED
-#define PACKED     __attribute__((packed))
-#endif
-
-/// Marks a function as not returning, for the purposes of compiler optimization.
-#ifndef NORETURN
-#define NORETURN   __attribute__((noreturn))
+#if defined(_MSC_VER)
+    #include <intrin.h>
+    #define __builtin_bswap16(x) _byteswap_ushort(x)
+    #define __builtin_bswap32(x) _byteswap_ulong(x)
+    #define __builtin_bswap64(x) _byteswap_uint64(x)
+#elif !defined(__GNUC__) && !defined(__clang__)
+    #error "Need byte-swap intrinsics for this compiler"
 #endif
