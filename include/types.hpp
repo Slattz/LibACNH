@@ -2,7 +2,7 @@
  *
  * types.hpp
  *
- * Copyright (c) 2021-2021, Slattz.
+ * Copyright (c) 2021-2025, Slattz.
  *
  * This file is part of LibACNH (https://github.com/Slattz/LibACNH).
  *
@@ -21,34 +21,7 @@
  */
 
 #pragma once
-
-/// Flags a function as (always) inline.
-#define ALWAYS_INLINE __attribute__((always_inline)) inline
-
-/// Flags a function as consteval in >= C++20, else constexpr in >= C++14, else just always inline
-/// Flags a function as constexpr in >= C++14, else just always inline
-#if __cplusplus > 201703L //gcc 10.2 uses 201709 for C++20 instead of 202002
-    #define LIBACNH_CONSTEVAL ALWAYS_INLINE consteval
-    #define LIBACNH_CONSTEXPR ALWAYS_INLINE constexpr
-
-#elif __cplusplus >= 201402L //C++14 and above
-    #define LIBACNH_CONSTEVAL ALWAYS_INLINE constexpr
-    #define LIBACNH_CONSTEXPR ALWAYS_INLINE constexpr
-    
-#else
-    #define LIBACNH_CONSTEVAL ALWAYS_INLINE
-    #define LIBACNH_CONSTEXPR ALWAYS_INLINE
-#endif
-
-/// Packs a struct so that it won't include padding bytes.
-#ifndef PACKED
-#define PACKED     __attribute__((packed))
-#endif
-
-/// Marks a function as not returning, for the purposes of compiler optimization.
-#ifndef NORETURN
-#define NORETURN   __attribute__((noreturn))
-#endif
+#include "compat.hpp"
 
 #ifdef __SWITCH__
 #include <switch/types.h>
