@@ -1,21 +1,21 @@
 /**
- * 
+ *
  * MurmurHash3.hpp
- * 
+ *
  * Copyright (c) 2021-2021, Slattz.
- * 
+ *
  * This file is part of LibACNH (https://github.com/Slattz/LibACNH).
- * 
+ *
  * LibACNH is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * LibACNH is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with LibACNH.  If not, see <https://www.gnu.org/licenses/>
  */
@@ -57,7 +57,7 @@ namespace MurmurHash3 {
                 checksum = (checksum * 5) + 0xE6546B64;
             }
         }
-        
+
         if (size % 4) {
             const char* remainder = str + offset + (nBlocks*4);
             u32 val = 0;
@@ -65,7 +65,7 @@ namespace MurmurHash3 {
             switch(size & 3) { //Hash remaining bytes as size isn't always aligned by 4
                 case 3: val ^= remainder[2] << 16; [[fallthrough]];
                 case 2: val ^= remainder[1] << 8; [[fallthrough]];
-                case 1: val ^= remainder[0]; 
+                case 1: val ^= remainder[0];
                         checksum ^= Murmur32_Scramble(val);
                 default: break;
             };

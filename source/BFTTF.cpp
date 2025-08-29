@@ -1,21 +1,21 @@
 /**
- * 
+ *
  * BFTTF.cpp
- * 
+ *
  * Copyright (c) 2021-2021, Slattz.
- * 
+ *
  * This file is part of LibACNH (https://github.com/Slattz/LibACNH).
- * 
+ *
  * LibACNH is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * LibACNH is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with LibACNH.  If not, see <https://www.gnu.org/licenses/>
  */
@@ -27,7 +27,7 @@
 bool BFTTF::Decrypt(const char* outFilePath, const char* inFilePath) {
     if (!outFilePath || !inFilePath)
         return false;
-    
+
     FILE* inFile = fopen(inFilePath, "r");
     if (inFile == NULL) {
         return false;
@@ -86,7 +86,7 @@ bool BFTTF::Decrypt(const char* outFilePath, const char* inFilePath) {
         value = __builtin_bswap32(value);
         fwrite(&value, sizeof(u32), 1, outFile);
     }
-    
+
     fclose(inFile);
     fclose(outFile);
     return true;
