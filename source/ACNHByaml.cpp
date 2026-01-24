@@ -97,6 +97,7 @@ u64 ACNHByaml::CalcOffset(u32& typeName, u32 fieldName) {
 u64 ACNHByaml::GetSize(u32& typeName, u32 fieldName) {
     u32 typeUInt = 0;
     u64 res = 0;
+    s64 len[2] = {1, 1};
 
     if (!IsTypeArray(parentNode.type) || !IsValid())
         return 0;
@@ -121,7 +122,17 @@ u64 ACNHByaml::GetSize(u32& typeName, u32 fieldName) {
                                 if (strcmp(elem2.first, "25efa387") == 0 && elem2.second.type == NodeType::UInt) { //25efa387 == "Name"
                                     found = (fieldName == elem2.second.UInt);
                                 }
-                                
+
+                                if (strcmp(elem2.first, "1e0eae33") == 0 && elem2.second.type == NodeType::Int64) { //1e0eae33 == "Length1"
+                                    if (elem2.second.Int64 > 0)
+                                        len[0] = elem2.second.Int64;
+                                }
+
+                                if (strcmp(elem2.first, "a9f41a61") == 0 && elem2.second.type == NodeType::Int64) { //a9f41a61 == "Length2"
+                                    if (elem2.second.Int64 > 0)
+                                        len[1] = elem2.second.Int64;
+                                }
+
                                 else if (found && strcmp(elem2.first, "5c65d8b5") == 0 && elem2.second.type == NodeType::UInt) { //5c65d8b5 == "TypeName"
                                      typeName = elem2.second.UInt;
                                 }
@@ -135,7 +146,7 @@ u64 ACNHByaml::GetSize(u32& typeName, u32 fieldName) {
                             }
                             
                             if (found) {
-                                return res;
+                                return res * (u64)len[0] * (u64)len[1];
                             }
                         }
                     }
