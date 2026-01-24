@@ -27,7 +27,6 @@ class ACNHByaml : public Byaml {
 private:
     u64 CalcOffset(u32& typeName, u32 fieldName);
     u64 GetSize(u32& typeName, u32 fieldName);
-    u64 GetSize(u32& typeName, u32 fieldName, ByamlNode &node);
     ByamlNode GetNode(u32& typeName, u32 fieldName);
 
 public:
